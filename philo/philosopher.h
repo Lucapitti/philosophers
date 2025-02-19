@@ -14,6 +14,7 @@ typedef struct s_data {
 	pthread_mutex_t *forks;
 	int				some1_died;
 	pthread_mutex_t printing;
+	pthread_mutex_t check_death;
 	size_t			beginnig_time;
 }	t_data;
 
@@ -27,5 +28,8 @@ typedef struct s_philo
 	size_t			last_meal;
 	int				curr_sleeping;
 	int				curr_eating;
+	int				nbr_eat;
 	pthread_mutex_t eating;
 }	t_philo;
+
+void	*routine(t_philo *philo);

@@ -6,43 +6,7 @@ int	wrong_input()
 	exit (1);
 }
 
-void	generate_philos(t_philo **all_philo, t_data *infos)
-{
-	int	i;
 
-	i = 0;
-	*all_philo = malloc(sizeof(t_philo)*(infos->nbr_of_philo));
-	if (!(*all_philo))
-		end_program();//boh vedi dopo
-	while (i < infos->nbr_of_philo)
-	{
-		(*all_philo)[i].info = infos;
-		(*all_philo)->left_fork = &infos->forks[i];
-		if (i + 1 < infos->nbr_of_philo)
-			(*all_philo)->right_fork = &infos->forks[i + 1];
-		else
-			(*all_philo)->right_fork = &infos->forks[0];
-		(*all_philo)->position = i;
-	}
-}
-
-int	init_mutex(t_data *info)
-{
-	int	i;
-
-	i = 0;
-	info->forks = malloc(sizeof(pthread_mutex_t)*info->nbr_of_philo);
-	if (info->forks)
-	{
-		printf("Mutex array creation failure\n");
-		return (1);
-	}
-	while (i < info->nbr_of_philo)
-		pthread_mutex_init(info->forks + i, NULL);
-	pthread_mutex_init(&info->printing, NULL);
-	return (0);
-	
-}
 
 int	check_and_set(char **argv, int argc, t_data *info)
 {
@@ -63,10 +27,23 @@ int	check_and_set(char **argv, int argc, t_data *info)
 		info->eating_number = ft_atoi(argv[5]);
 	else
 		info->eating_number = -1;
+	if (!info->eating_number)
+		success(); // finisce il programma e printa messaggio evviva
 	info->some1_died = 0;
+	info->beginnig_time = get_curr_time();
 	if (init_mutex(info))
 		exit (1);
 	return (check);
+}
+
+void	run_threads(t_philo *all_philos, t_data info)
+{
+	int	i;
+
+	i = 0;
+	//observer_tread
+	while (i < info.nbr_of_philo)
+		pthread_create(all_philos[i].thread, 0, routine, &all_philos[i++]);
 }
 
 int main(int argc, char **argv, char **envp)
@@ -78,4 +55,5 @@ int main(int argc, char **argv, char **envp)
 		wrong_input();
 	all_philos = 0;
 	generate_philos(&all_philos, &info);
+	run_threads(all_philos, info);
 }
