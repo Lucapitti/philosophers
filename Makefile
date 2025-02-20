@@ -1,6 +1,6 @@
 NAME = philo
 CFLAGS = -Wall -Wextra -Werror -g -gdwarf-4
-SRCS = srcs/main.c 
+SRCS = philo/main.c philo/time.c philo/philo.c philo/threads
 OBJ	= $(patsubst %.c, %.o, $(SRCS))
 CC = gcc
 RM = rm -f

@@ -33,3 +33,4 @@ typedef struct s_philo
 }	t_philo;
 
 void	*routine(t_philo *philo);
+size_t	get_curr_time();

@@ -12,7 +12,7 @@ int	check_and_set(char **argv, int argc, t_data *info)
 {
 	int check;
 
-	check == 0;
+	check = 0;
 	if (argc >= 7 || argc < 5)
 		return (0);
 	if (ft_atoi(argv[1]) > 0 && ++check)
