@@ -6,13 +6,13 @@ int	init_mutex(t_data *info)
 
 	i = 0;
 	info->forks = malloc(sizeof(pthread_mutex_t)*info->nbr_of_philo);
-	if (info->forks)
+	if (!info->forks)
 	{
 		printf("Mutex array creation failure\n");
 		return (1);
 	}
 	while (i < info->nbr_of_philo)
-		pthread_mutex_init(info->forks + i, NULL);
+		pthread_mutex_init(info->forks + i++, NULL);
 	pthread_mutex_init(&info->printing, NULL);
 	pthread_mutex_init(&info->check_death, NULL);
 	return (0);
@@ -39,5 +39,6 @@ void	generate_philos(t_philo **all_philo, t_data *infos)
 		(*all_philo)[i].nbr_eat = 0;
 		pthread_mutex_init(&(*all_philo)[i].nbr_eaten, 0);
 		pthread_mutex_init(&(*all_philo)[i].eating, 0);
+		i++;
 	}
 }

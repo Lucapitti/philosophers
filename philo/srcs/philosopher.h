@@ -35,6 +35,10 @@ typedef struct s_philo
 	pthread_mutex_t nbr_eaten;
 }	t_philo;
 
-void	*routine(t_philo *philo);
+void	*routine(void *philosopher);
 size_t	get_curr_time();
 int		terminate_prog(t_philo *philo, int flag, t_data *info, char *c);
+void	ft_putendl_fd(char *s, int fd);
+int		ft_atoi(const char *str);
+void	generate_philos(t_philo **all_philo, t_data *infos);
+int		init_mutex(t_data *info);
