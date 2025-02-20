@@ -1,7 +1,5 @@
 #include "philosopher.h"
 
-
-
 int	init_mutex(t_data *info)
 {
 	int	i;
@@ -16,7 +14,7 @@ int	init_mutex(t_data *info)
 	while (i < info->nbr_of_philo)
 		pthread_mutex_init(info->forks + i, NULL);
 	pthread_mutex_init(&info->printing, NULL);
-    pthread_mutex_init(&info->check_death, NULL);
+	pthread_mutex_init(&info->check_death, NULL);
 	return (0);
 }
 
@@ -28,7 +26,7 @@ void	generate_philos(t_philo **all_philo, t_data *infos)
 	i = 0;
 	*all_philo = malloc(sizeof(t_philo)*(infos->nbr_of_philo));
 	if (!(*all_philo))
-		end_program();//boh vedi dopo
+		terminate_prog(0, 1, infos, "Malloc failure in creating philos");//boh vedi dopo
 	while (i < infos->nbr_of_philo)
 	{
 		(*all_philo)[i].info = infos;
@@ -39,5 +37,7 @@ void	generate_philos(t_philo **all_philo, t_data *infos)
 			(*all_philo)[i].right_fork = &infos->forks[0];
 		(*all_philo)[i].position = i;
 		(*all_philo)[i].nbr_eat = 0;
+		pthread_mutex_init(&(*all_philo)[i].nbr_eaten, 0);
+		pthread_mutex_init(&(*all_philo)[i].eating, 0);
 	}
 }
