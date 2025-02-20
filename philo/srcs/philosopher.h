@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <pthread.h>
+#include <fcntl.h>  // Per la dichiarazione di open
+#include <unistd.h> // Per la dichiarazione di close
 #define THREAD 1
 #define PROG 0
 

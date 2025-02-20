@@ -11,7 +11,7 @@ size_t	get_curr_time()
 	struct timeval	time;
 
 	gettimeofday(&time, NULL);
-	return(time.tv_sec * 100 + time.tv_usec / 100);
+	return(time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
 int	check_and_set(char **argv, int argc, t_data *info)
@@ -36,7 +36,6 @@ int	check_and_set(char **argv, int argc, t_data *info)
 	if (!info->eating_number)
 		exit(0); // finisce il programma e printa messaggio evviva
 	info->end_simulation = 0;
-	info->beginnig_time = get_curr_time();
 	if (init_mutex(info))
 		exit(1);
 	return (check);
@@ -57,16 +56,26 @@ int	terminate_prog(t_philo *philo, int exit_code, t_data *info, char *c)
 			pthread_mutex_destroy(&philo[i].nbr_eaten);
 		}
 		pthread_mutex_destroy(&info->forks[i]);
+		i++;
 	}
 	if (c)
 		ft_putendl_fd(c, 2);
 	free(philo);
-	exit (exit_code);
+	free(info->forks);
+	exit(exit_code);
 }
 
 int	check_num_eaten(t_philo *philo)
 {
+	int fd;
+
+	fd = open("ciao", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	pthread_mutex_lock(&philo->nbr_eaten);
+	pthread_mutex_lock(&philo->info->printing);
+
+	ft_putendl_fd(itoa(), fd);//dubugging
+	ft_putendl_fd("ha mangiato", fd);
+	pthread_mutex_unlock(&philo->info->printing);
 	if (philo->nbr_eat >= philo->info->eating_number)
 	{
 		pthread_mutex_unlock(&philo->nbr_eaten);
@@ -82,7 +91,7 @@ void	call_death(t_data *info, int i)
 	info->end_simulation = 1;
 	pthread_mutex_unlock(&info->check_death);
 	pthread_mutex_lock(&info->printing);
-	printf("%lu %i died", get_curr_time() - info->beginnig_time, i + 1);
+	printf("%lu %i died\n", get_curr_time() - info->beginnig_time, i + 1);
 	pthread_mutex_unlock(&info->printing);
 }
 
@@ -104,8 +113,8 @@ int	monitor(t_philo *all_philos, t_data *info)
 				return (0);
 			}
 			pthread_mutex_unlock(&all_philos[i].eating);
-			if (info->eating_number != -1 && check_num_eaten(all_philos + i))
-				check++;
+			if (info->eating_number != -1)
+				check += check_num_eaten(all_philos + i);
 		}
 		if (check == info->nbr_of_philo)
 		{
@@ -123,7 +132,7 @@ int	run_threads(t_philo *all_philos, t_data *info)
 	int	i;
 
 	i = 0;
-	//observer_tread
+	info->beginnig_time = get_curr_time();
 	while (i < info->nbr_of_philo)
 	{
 		pthread_create(&all_philos[i].thread, 0, routine, &all_philos[i]);
