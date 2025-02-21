@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <sys/time.h>
 #include <pthread.h>
 #include <fcntl.h>  // Per la dichiarazione di open
@@ -44,3 +45,4 @@ void	ft_putendl_fd(char *s, int fd);
 int		ft_atoi(const char *str);
 void	generate_philos(t_philo **all_philo, t_data *infos);
 int		init_mutex(t_data *info);
+int		ft_usleep(size_t milliseconds, t_philo *philo);

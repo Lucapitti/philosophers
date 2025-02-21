@@ -6,6 +6,23 @@ int	wrong_input()
 	exit (1);
 }
 
+int	ft_usleep(size_t milliseconds, t_philo *philo)
+{
+	size_t	start;
+	size_t	time;
+
+	start = get_curr_time();
+	time = get_curr_time();
+	while ((time - start) < milliseconds)
+	{
+		if (philo->info->end_simulation)
+			return (0);
+		usleep(500);
+		time = get_curr_time();
+	}
+	return (1);
+}
+
 size_t	get_curr_time()
 {
 	struct timeval	time;
@@ -34,7 +51,7 @@ int	check_and_set(char **argv, int argc, t_data *info)
 	else
 		info->eating_number = -1;
 	if (!info->eating_number)
-		exit(0); // finisce il programma e printa messaggio evviva
+		exit(0);
 	info->end_simulation = 0;
 	if (init_mutex(info))
 		exit(1);
@@ -67,15 +84,7 @@ int	terminate_prog(t_philo *philo, int exit_code, t_data *info, char *c)
 
 int	check_num_eaten(t_philo *philo)
 {
-	int fd;
-
-	fd = open("ciao", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	pthread_mutex_lock(&philo->nbr_eaten);
-	pthread_mutex_lock(&philo->info->printing);
-
-	ft_putendl_fd(itoa(), fd);//dubugging
-	ft_putendl_fd("ha mangiato", fd);
-	pthread_mutex_unlock(&philo->info->printing);
 	if (philo->nbr_eat >= philo->info->eating_number)
 	{
 		pthread_mutex_unlock(&philo->nbr_eaten);
@@ -107,7 +116,7 @@ int	monitor(t_philo *all_philos, t_data *info)
 		while (i < info->nbr_of_philo)
 		{
 			pthread_mutex_lock(&all_philos[i].eating);
-			if (get_curr_time() - all_philos[i].last_meal > info->time_before_death && !all_philos[i].curr_eating)
+			if (get_curr_time() - all_philos[i].last_meal >= info->time_before_death && !(all_philos[i].curr_eating))
 			{
 				call_death(info, i);
 				return (0);
@@ -115,6 +124,7 @@ int	monitor(t_philo *all_philos, t_data *info)
 			pthread_mutex_unlock(&all_philos[i].eating);
 			if (info->eating_number != -1)
 				check += check_num_eaten(all_philos + i);
+			i++;
 		}
 		if (check == info->nbr_of_philo)
 		{
@@ -135,6 +145,7 @@ int	run_threads(t_philo *all_philos, t_data *info)
 	info->beginnig_time = get_curr_time();
 	while (i < info->nbr_of_philo)
 	{
+		all_philos[i].last_meal = get_curr_time();
 		pthread_create(&all_philos[i].thread, 0, routine, &all_philos[i]);
 		pthread_detach(all_philos[i].thread);
 		i++;

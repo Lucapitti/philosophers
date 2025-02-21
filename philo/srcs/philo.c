@@ -37,6 +37,7 @@ void	generate_philos(t_philo **all_philo, t_data *infos)
 			(*all_philo)[i].right_fork = &infos->forks[0];
 		(*all_philo)[i].position = i;
 		(*all_philo)[i].nbr_eat = 0;
+		(*all_philo)[i].curr_eating = 0;
 		pthread_mutex_init(&(*all_philo)[i].nbr_eaten, 0);
 		pthread_mutex_init(&(*all_philo)[i].eating, 0);
 		i++;

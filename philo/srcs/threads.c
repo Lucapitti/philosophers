@@ -38,12 +38,13 @@ int	philo_sleep(t_philo *philo)
 	if (!no_one_died(philo))
 		return (0);
 	philo_print(philo, "is sleeping");
-	usleep(philo->info->time_to_sleep * 1000);
-	return (1);
+	return (ft_usleep(philo->info->time_to_sleep, philo));
 }
 
 int	philo_eat(t_philo *philo)
 {
+	int	check;
+
 	if (!no_one_died(philo))
 		return (0);
 	pthread_mutex_lock(philo->right_fork);
@@ -51,19 +52,19 @@ int	philo_eat(t_philo *philo)
 	pthread_mutex_lock(philo->left_fork);
 	philo_print(philo, "is eating");
 	pthread_mutex_lock(&philo->eating);
-	philo->curr_eating++;
+	philo->curr_eating = 1;
 	pthread_mutex_unlock(&philo->eating);
-	usleep(philo->info->time_to_eat * 1000);
+	check = ft_usleep(philo->info->time_to_eat, philo);
 	pthread_mutex_lock(&philo->nbr_eaten);
 	philo->nbr_eat++;
 	pthread_mutex_unlock(&philo->nbr_eaten);
 	pthread_mutex_lock(&philo->eating);
-	philo->curr_eating--;
+	philo->curr_eating = 0;
 	philo->last_meal = get_curr_time();
 	pthread_mutex_unlock(&philo->eating);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
-	return (1);
+	return (check);
 }
 
 void	*routine(void *philosopher)
@@ -71,7 +72,6 @@ void	*routine(void *philosopher)
 	t_philo	*philo;
 
 	philo = (t_philo *)philosopher;
-	philo->last_meal = get_curr_time();
 	if ((philo->position + 1) % 2)
 	{
 		if (!philo_think(philo))
