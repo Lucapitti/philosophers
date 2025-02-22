@@ -7,14 +7,12 @@
 #include <pthread.h>
 #include <fcntl.h>  // Per la dichiarazione di open
 #include <unistd.h> // Per la dichiarazione di close
-#define THREAD 1
-#define PROG 0
 
 typedef struct s_data {
 	size_t			time_to_eat;
 	size_t			time_before_death;
 	size_t			time_to_sleep;
-	int				eating_number;
+	int				eating_goal;
 	int				nbr_of_philo;
 	pthread_mutex_t *forks;
 	int				end_simulation;
@@ -31,7 +29,6 @@ typedef struct s_philo
 	pthread_mutex_t	*left_fork;
 	int				position;
 	size_t			last_meal;
-	int				curr_sleeping;
 	int				curr_eating;
 	pthread_mutex_t eating;
 	int				nbr_eat;
@@ -46,3 +43,9 @@ int		ft_atoi(const char *str);
 void	generate_philos(t_philo **all_philo, t_data *infos);
 int		init_mutex(t_data *info);
 int		ft_usleep(size_t milliseconds, t_philo *philo);
+int		check_and_set(char **argv, int argc, t_data *info);
+int		run_threads(t_philo *all_philos, t_data *info);
+int		monitor(t_philo *all_philos, t_data *info);
+int		ft_usleep(size_t milliseconds, t_philo *philo);
+int		philo_print(t_philo *philo, char *s);
+int		no_one_died(t_philo *philo);

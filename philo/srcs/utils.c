@@ -36,3 +36,41 @@ void	ft_putendl_fd(char *s, int fd)
 		write (fd, s++, 1);
 	write (fd, "\n", 1);
 }
+
+int	philo_print(t_philo *philo, char *s)
+{
+	if (!no_one_died(philo))
+		return (1);
+	pthread_mutex_lock(&philo->info->check_death);
+	pthread_mutex_lock(&philo->info->printing);
+	printf("%lu %i ", get_curr_time() - philo->info->beginnig_time, philo->position + 1);
+	printf("%s\n", s);
+	pthread_mutex_unlock(&philo->info->printing);
+	pthread_mutex_unlock(&philo->info->check_death);
+	return (0);
+}
+
+int	ft_usleep(size_t milliseconds, t_philo *philo)
+{
+	size_t	start;
+	size_t	time;
+
+	start = get_curr_time();
+	time = get_curr_time();
+	while ((time - start) < milliseconds)
+	{
+		if (philo->info->end_simulation)
+			return (0);
+		usleep(500);
+		time = get_curr_time();
+	}
+	return (1);
+}
+
+size_t	get_curr_time(void)
+{
+	struct timeval	time;
+
+	gettimeofday(&time, NULL);
+	return(time.tv_sec * 1000 + time.tv_usec / 1000);
+}
