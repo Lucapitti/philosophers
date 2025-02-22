@@ -23,7 +23,7 @@
 typedef struct s_data
 {
 	size_t			time_to_eat;
-	size_t			time_before_death;
+	size_t			max_time;
 	size_t			time_to_sleep;
 	int				eating_goal;
 	int				nbr_of_philo;
@@ -31,7 +31,7 @@ typedef struct s_data
 	int				end_simulation;
 	pthread_mutex_t	printing;
 	pthread_mutex_t	check_death;
-	size_t			beginnig_time;
+	size_t			start_tm;
 }	t_data;
 
 typedef struct s_philo
@@ -40,7 +40,7 @@ typedef struct s_philo
 	pthread_t		thread;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	*left_fork;
-	int				position;
+	int				pos;
 	size_t			last_meal;
 	int				curr_eating;
 	pthread_mutex_t	eating;
@@ -49,7 +49,7 @@ typedef struct s_philo
 }	t_philo;
 
 void	*routine(void *philosopher);
-size_t	get_curr_time(void);
+size_t	curr_time(void);
 int		terminate_prog(t_philo *philo, int flag, t_data *info, char *c);
 void	ft_putendl_fd(char *s, int fd);
 int		ft_atoi(const char *str);
@@ -58,7 +58,8 @@ int		init_mutex(t_data *info);
 int		ft_usleep(size_t milliseconds, t_philo *philo);
 int		check_and_set(char **argv, int argc, t_data *info);
 void	run_threads(t_philo *all_philos, t_data *info);
-void	monitor(t_philo *all_philos, t_data *info);
-int		ft_usleep(size_t milliseconds, t_philo *philo);
+void	monitor(t_philo *all_philos, t_data *info, int check);
+int		better_usleep(size_t milliseconds, t_philo *philo);
 int		philo_print(t_philo *philo, char *s);
 int		no_one_died(t_philo *philo);
+void	wait_threads(t_philo *all_philos);

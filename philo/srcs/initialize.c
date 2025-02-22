@@ -17,7 +17,7 @@ int	init_mutex(t_data *info)
 	int	i;
 
 	i = 0;
-	info->forks = malloc(sizeof(pthread_mutex_t) * info->nbr_of_philo);
+	info->forks = malloc(sizeof(pthread_mutex_t) * (info->nbr_of_philo));
 	if (!info->forks)
 	{
 		ft_putendl_fd("Mutex array creation failure", 2);
@@ -46,7 +46,7 @@ void	generate_philos(t_philo **all_philo, t_data *infos)
 			(*all_philo)[i].right_fork = &infos->forks[i - 1];
 		else
 			(*all_philo)[i].right_fork = &infos->forks[infos->nbr_of_philo - 1];
-		(*all_philo)[i].position = i;
+		(*all_philo)[i].pos = i;
 		(*all_philo)[i].nbr_eat = 0;
 		(*all_philo)[i].curr_eating = 0;
 		pthread_mutex_init(&(*all_philo)[i].nbr_eaten, 0);
@@ -57,21 +57,21 @@ void	generate_philos(t_philo **all_philo, t_data *infos)
 
 int	check_and_set(char **argv, int argc, t_data *info)
 {
-	int	check;
-
-	check = 0;
 	if (argc >= 7 || argc < 5)
 		return (0);
-	if (ft_atoi(argv[1]) > 0 && ++check)
-		info->nbr_of_philo = ft_atoi(argv[1]);
-	if (ft_atoi(argv[2]) > 0 && ++check)
-		info->time_before_death = ft_atoi(argv[2]);
-	if (ft_atoi(argv[3]) > 0 && ++check)
-		info->time_to_eat = ft_atoi(argv[3]);
-	if (ft_atoi(argv[4]) > 0 && ++check)
-		info->time_to_sleep = ft_atoi(argv[4]);
-	if (argc == 6 && ft_atoi(argv[5]) >= 0 && ++check)
+	if (ft_atoi(argv[1]) <= 0 || ft_atoi(argv[2]) <= 0
+		|| ft_atoi(argv[3]) <= 0 || ft_atoi(argv[4]) <= 0)
+		return (1);
+	info->nbr_of_philo = ft_atoi(argv[1]);
+	info->max_time = ft_atoi(argv[2]);
+	info->time_to_eat = ft_atoi(argv[3]);
+	info->time_to_sleep = ft_atoi(argv[4]);
+	if (argc == 6)
+	{
 		info->eating_goal = ft_atoi(argv[5]);
+		if (info->eating_goal < 0)
+			return (1);
+	}
 	else
 		info->eating_goal = -1;
 	if (!info->eating_goal)
@@ -79,7 +79,7 @@ int	check_and_set(char **argv, int argc, t_data *info)
 	info->end_simulation = 0;
 	if (init_mutex(info))
 		exit(1);
-	return (check);
+	return (0);
 }
 
 void	run_threads(t_philo *all_philos, t_data *info)
@@ -87,14 +87,13 @@ void	run_threads(t_philo *all_philos, t_data *info)
 	int	i;
 
 	i = 0;
-	info->beginnig_time = get_curr_time();
+	info->start_tm = curr_time();
 	while (i < info->nbr_of_philo)
 	{
-		all_philos[i].last_meal = get_curr_time();
+		all_philos[i].last_meal = curr_time();
 		if (pthread_create(&all_philos[i].thread, 0, routine, &all_philos[i]))
 			terminate_prog(all_philos, -1, info, "Failed to create thread");
-		pthread_detach(all_philos[i].thread);
 		i++;
 	}
-	monitor(all_philos, info);
+	monitor(all_philos, info, 0);
 }

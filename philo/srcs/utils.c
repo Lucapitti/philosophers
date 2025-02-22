@@ -52,34 +52,34 @@ void	ft_putendl_fd(char *s, int fd)
 int	philo_print(t_philo *philo, char *s)
 {
 	if (!no_one_died(philo))
-		return (1);
+		return (0);
 	pthread_mutex_lock(&philo->info->check_death);
 	pthread_mutex_lock(&philo->info->printing);
-	printf("%lu %i ", get_curr_time() - philo->info->beginnig_time, philo->position + 1);
+	printf("%lu %i ", curr_time() - philo->info->start_tm, philo->pos + 1);
 	printf("%s\n", s);
 	pthread_mutex_unlock(&philo->info->printing);
 	pthread_mutex_unlock(&philo->info->check_death);
-	return (0);
+	return (1);
 }
 
-int	ft_usleep(size_t milliseconds, t_philo *philo)
+int	better_usleep(size_t milliseconds, t_philo *philo)
 {
 	size_t	start;
 	size_t	time;
 
-	start = get_curr_time();
-	time = get_curr_time();
+	start = curr_time();
+	time = curr_time();
 	while ((time - start) < milliseconds)
 	{
 		if (philo->info->end_simulation)
 			return (0);
 		usleep(500);
-		time = get_curr_time();
+		time = curr_time();
 	}
 	return (1);
 }
 
-size_t	get_curr_time(void)
+size_t	curr_time(void)
 {
 	struct timeval	time;
 
