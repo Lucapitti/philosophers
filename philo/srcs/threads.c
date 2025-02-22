@@ -61,8 +61,8 @@ int	philo_eat(t_philo *philo, int check)
 			pthread_mutex_unlock(&philo->nbr_eaten);
 			pthread_mutex_lock(&philo->eating);
 			philo->curr_eating = 0;
+			pthread_mutex_unlock(&philo->eating);
 		}
-		pthread_mutex_unlock(&philo->eating);
 		pthread_mutex_unlock(philo->left_fork);
 	}
 	pthread_mutex_unlock(philo->right_fork);

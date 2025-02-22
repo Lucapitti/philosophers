@@ -71,8 +71,6 @@ int	better_usleep(size_t milliseconds, t_philo *philo)
 	time = curr_time();
 	while ((time - start) < milliseconds)
 	{
-		if (philo->info->end_simulation)
-			return (0);
 		usleep(500);
 		time = curr_time();
 	}

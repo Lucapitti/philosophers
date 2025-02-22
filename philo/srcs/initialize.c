@@ -58,7 +58,7 @@ void	generate_philos(t_philo **all_philo, t_data *infos)
 int	check_and_set(char **argv, int argc, t_data *info)
 {
 	if (argc >= 7 || argc < 5)
-		return (0);
+		return (1);
 	if (ft_atoi(argv[1]) <= 0 || ft_atoi(argv[2]) <= 0
 		|| ft_atoi(argv[3]) <= 0 || ft_atoi(argv[4]) <= 0)
 		return (1);
