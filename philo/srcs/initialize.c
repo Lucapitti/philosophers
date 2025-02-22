@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   initialize.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lpittigl <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/22 14:10:19 by lpittigl          #+#    #+#             */
+/*   Updated: 2025/02/22 14:10:19 by lpittigl         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosopher.h"
 
 int	init_mutex(t_data *info)
@@ -5,7 +17,7 @@ int	init_mutex(t_data *info)
 	int	i;
 
 	i = 0;
-	info->forks = malloc(sizeof(pthread_mutex_t)*info->nbr_of_philo);
+	info->forks = malloc(sizeof(pthread_mutex_t) * info->nbr_of_philo);
 	if (!info->forks)
 	{
 		ft_putendl_fd("Mutex array creation failure", 2);
@@ -18,23 +30,22 @@ int	init_mutex(t_data *info)
 	return (0);
 }
 
-
 void	generate_philos(t_philo **all_philo, t_data *infos)
 {
 	int	i;
 
 	i = 0;
-	*all_philo = malloc(sizeof(t_philo)*(infos->nbr_of_philo));
+	*all_philo = malloc(sizeof(t_philo) * (infos->nbr_of_philo));
 	if (!(*all_philo))
 		terminate_prog(0, 1, infos, "Malloc failure in creating philos");
 	while (i < infos->nbr_of_philo)
 	{
 		(*all_philo)[i].info = infos;
 		(*all_philo)[i].left_fork = &infos->forks[i];
-		if (i + 1 < infos->nbr_of_philo)
-			(*all_philo)[i].right_fork = &infos->forks[i + 1];
+		if (i)
+			(*all_philo)[i].right_fork = &infos->forks[i - 1];
 		else
-			(*all_philo)[i].right_fork = &infos->forks[0];
+			(*all_philo)[i].right_fork = &infos->forks[infos->nbr_of_philo - 1];
 		(*all_philo)[i].position = i;
 		(*all_philo)[i].nbr_eat = 0;
 		(*all_philo)[i].curr_eating = 0;
@@ -46,7 +57,7 @@ void	generate_philos(t_philo **all_philo, t_data *infos)
 
 int	check_and_set(char **argv, int argc, t_data *info)
 {
-	int check;
+	int	check;
 
 	check = 0;
 	if (argc >= 7 || argc < 5)
@@ -71,7 +82,7 @@ int	check_and_set(char **argv, int argc, t_data *info)
 	return (check);
 }
 
-int	run_threads(t_philo *all_philos, t_data *info)
+void	run_threads(t_philo *all_philos, t_data *info)
 {
 	int	i;
 
@@ -80,9 +91,10 @@ int	run_threads(t_philo *all_philos, t_data *info)
 	while (i < info->nbr_of_philo)
 	{
 		all_philos[i].last_meal = get_curr_time();
-		pthread_create(&all_philos[i].thread, 0, routine, &all_philos[i]);
+		if (pthread_create(&all_philos[i].thread, 0, routine, &all_philos[i]))
+			terminate_prog(all_philos, -1, info, "Failed to create thread");
 		pthread_detach(all_philos[i].thread);
 		i++;
 	}
-	return(monitor(all_philos, info));
+	monitor(all_philos, info);
 }

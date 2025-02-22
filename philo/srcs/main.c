@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lpittigl <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/22 14:10:19 by lpittigl          #+#    #+#             */
+/*   Updated: 2025/02/22 14:10:19 by lpittigl         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosopher.h"
 
 int	terminate_prog(t_philo *philo, int exit_code, t_data *info, char *c)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	pthread_mutex_destroy(&info->printing);
@@ -46,7 +58,7 @@ void	call_death(t_data *info, int i)
 	pthread_mutex_unlock(&info->printing);
 }
 
-int	monitor(t_philo *all_philos, t_data *info)
+void	monitor(t_philo *all_philos, t_data *info)
 {
 	int	i;
 	int	check;
@@ -59,10 +71,7 @@ int	monitor(t_philo *all_philos, t_data *info)
 		{
 			pthread_mutex_lock(&all_philos[i].eating);
 			if (get_curr_time() - all_philos[i].last_meal >= info->time_before_death && !(all_philos[i].curr_eating))
-			{
 				call_death(info, i);
-				return (0);
-			}
 			pthread_mutex_unlock(&all_philos[i].eating);
 			if (info->eating_goal != -1)
 				check += check_num_eaten(all_philos + i);
@@ -73,13 +82,12 @@ int	monitor(t_philo *all_philos, t_data *info)
 			pthread_mutex_lock(&info->check_death);
 			info->end_simulation = 1;
 			pthread_mutex_unlock(&info->check_death);
-			return (0);
+			return ;
 		}
 	}
-	return (0);
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_philo	*all_philos;
 	t_data	info;
