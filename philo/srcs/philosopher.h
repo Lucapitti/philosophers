@@ -50,16 +50,16 @@ typedef struct s_philo
 
 void	*routine(void *philosopher);
 size_t	curr_time(void);
-int		terminate_prog(t_philo *philo, int flag, t_data *info, char *c);
+int		term_prog(t_philo *philo, int flag, t_data *info, char *c);
 void	ft_putendl_fd(char *s, int fd);
 int		ft_atoi(const char *str);
-void	generate_philos(t_philo **all_philo, t_data *infos);
+int		generate_philos(t_philo **all_philo, t_data *infos);
 int		init_mutex(t_data *info);
 int		ft_usleep(size_t milliseconds, t_philo *philo);
 int		check_and_set(char **argv, int argc, t_data *info);
-void	run_threads(t_philo *all_philos, t_data *info);
-void	monitor(t_philo *all_philos, t_data *info, int check);
-int		better_usleep(size_t milliseconds, t_philo *philo);
+int		run_threads(t_philo *all_philos, t_data *info);
+int		monitor(t_philo *all_philos, t_data *info, int check);
+int		better_usleep(size_t milliseconds);
 int		philo_print(t_philo *philo, char *s);
 int		no_one_died(t_philo *philo);
 void	wait_threads(t_philo *all_philos);

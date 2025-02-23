@@ -30,14 +30,14 @@ int	init_mutex(t_data *info)
 	return (0);
 }
 
-void	generate_philos(t_philo **all_philo, t_data *infos)
+int	generate_philos(t_philo **all_philo, t_data *infos)
 {
 	int	i;
 
 	i = 0;
 	*all_philo = malloc(sizeof(t_philo) * (infos->nbr_of_philo));
 	if (!(*all_philo))
-		terminate_prog(0, 1, infos, "Malloc failure in creating philos");
+		return (1);
 	while (i < infos->nbr_of_philo)
 	{
 		(*all_philo)[i].info = infos;
@@ -53,6 +53,7 @@ void	generate_philos(t_philo **all_philo, t_data *infos)
 		pthread_mutex_init(&(*all_philo)[i].eating, 0);
 		i++;
 	}
+	return (0);
 }
 
 int	check_and_set(char **argv, int argc, t_data *info)
@@ -74,15 +75,11 @@ int	check_and_set(char **argv, int argc, t_data *info)
 	}
 	else
 		info->eating_goal = -1;
-	if (!info->eating_goal)
-		exit(0);
 	info->end_simulation = 0;
-	if (init_mutex(info))
-		exit(1);
 	return (0);
 }
 
-void	run_threads(t_philo *all_philos, t_data *info)
+int	run_threads(t_philo *all_philos, t_data *info)
 {
 	int	i;
 
@@ -92,8 +89,8 @@ void	run_threads(t_philo *all_philos, t_data *info)
 	{
 		all_philos[i].last_meal = curr_time();
 		if (pthread_create(&all_philos[i].thread, 0, routine, &all_philos[i]))
-			terminate_prog(all_philos, -1, info, "Failed to create thread");
+			return (1);
 		i++;
 	}
-	monitor(all_philos, info, 0);
+	return (monitor(all_philos, info, 0));
 }

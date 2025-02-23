@@ -37,7 +37,7 @@ int	philo_sleep(t_philo *philo)
 		return (0);
 	if (philo_print(philo, "is sleeping") == 0)
 		return (1);
-	return (better_usleep(philo->info->time_to_sleep, philo));
+	return (better_usleep(philo->info->time_to_sleep));
 }
 
 int	philo_eat(t_philo *philo, int check)
@@ -55,7 +55,7 @@ int	philo_eat(t_philo *philo, int check)
 			philo->curr_eating = 1;
 			philo->last_meal = curr_time();
 			pthread_mutex_unlock(&philo->eating);
-			check = better_usleep(philo->info->time_to_eat, philo);
+			check = better_usleep(philo->info->time_to_eat);
 			pthread_mutex_lock(&philo->nbr_eaten);
 			philo->nbr_eat++;
 			pthread_mutex_unlock(&philo->nbr_eaten);

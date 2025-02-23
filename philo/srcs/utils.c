@@ -62,18 +62,13 @@ int	philo_print(t_philo *philo, char *s)
 	return (1);
 }
 
-int	better_usleep(size_t milliseconds, t_philo *philo)
+int	better_usleep(size_t milliseconds)
 {
 	size_t	start;
-	size_t	time;
 
 	start = curr_time();
-	time = curr_time();
-	while ((time - start) < milliseconds)
-	{
+	while ((curr_time() - start) < milliseconds)
 		usleep(500);
-		time = curr_time();
-	}
 	return (1);
 }
 
