@@ -25,7 +25,10 @@ int	term_prog(t_philo *philo, int exit_code, t_data *info, char *c)
 			pthread_mutex_destroy(&philo[i].eating);
 			pthread_mutex_destroy(&philo[i].nbr_eaten);
 		}
-		pthread_mutex_destroy(&info->forks[i]);
+		if (i)
+			pthread_mutex_destroy(&info->forks[i - 1]);
+		else
+			pthread_mutex_destroy(&info->forks[info->nbr_of_philo - 1]);
 		i++;
 	}
 	pthread_mutex_destroy(&info->printing);
