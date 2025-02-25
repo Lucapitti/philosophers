@@ -73,7 +73,10 @@ int	monitor(t_philo *all_philos, t_data *info, int check)
 			pthread_mutex_lock(&all_philos[i].eating);
 			if (curr_time() - all_philos[i].last_meal >= info->max_time
 				&& !(all_philos[i].curr_eating))
+			{
+				pthread_mutex_unlock(&all_philos[i].eating);
 				return (call_death(info, i));
+			}
 			pthread_mutex_unlock(&all_philos[i].eating);
 			if (info->eating_goal != -1)
 				check += check_num_eaten(all_philos + i);
